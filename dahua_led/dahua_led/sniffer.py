@@ -1,12 +1,11 @@
 from scapy.all import sniff, TCP, Raw
-import re
-import json
+import re, json
 
-# ---- Ayarlar ----
-FTP_INTERFACE = None  # Interfaces to listen to, None listens to all
+# ---- Settings ----
+FTP_INTERFACE = None  # Interfaces to listen to, setting "None" listens to all
 JSON_FILE = "filenames.json"  # JSON file to store incoming file names
 
-# Example: 20250420_34ABC123_sedan_giren_ford.jpg
+# Example: 20250420_34ABC123_sedan_incoming_ford.jpg
 FILENAME_PATTERN = re.compile(r"^(?P<date>\d{8})_(?P<plate>[A-Z0-9]+)_.+\.(jpg|jpeg|png)$", re.IGNORECASE)
 
 
@@ -41,12 +40,13 @@ def parse_ftp_packet(pkt):
                 _, filename = line.split("STOR ", 1)
                 filename = filename.strip()
                 kaydet(filename=filename)
-                # Sadece beklenen formattaki dosyaları kaydet
+                
+                # Save only specific file types:
                 """
                 if FILENAME_PATTERN.match(filename):
                     kaydet(filename)
                 else:
-                    print(f"[!] Beklenmeyen format: {filename}")
+                    print(f"[!] Unexpected format: {filename}")
                 """
             except ValueError:
                 continue
